@@ -41,7 +41,7 @@ const inputClasses =
         id="language"
         required
       >
-        <option value="1">Arabic</option>
+        <option value="1">Arabe</option>
         <option value="2">Englais</option>
         <option value="3">Francais</option>
       </select>

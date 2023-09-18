@@ -2,30 +2,24 @@
 
 namespace App\Entity;
 
-use App\Repository\LanguageRepository;
+use App\Repository\TechnicalRoleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: LanguageRepository::class)]
-class Language
+#[ORM\Entity(repositoryClass: TechnicalRoleRepository::class)]
+class TechnicalRole
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Assert\NotBlank()]
-    #[Assert\Type('string')]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'language', targetEntity: User::class)]
+    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'technicalRoles')]
     private Collection $users;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $iso = null;
 
     public function __construct()
     {
@@ -45,6 +39,7 @@ class Language
     public function setName(string $name): static
     {
         $this->name = $name;
+
         return $this;
     }
 
@@ -60,7 +55,7 @@ class Language
     {
         if (!$this->users->contains($user)) {
             $this->users->add($user);
-            $user->setLanguage($this);
+            $user->addTechnicalRole($this);
         }
 
         return $this;
@@ -69,23 +64,8 @@ class Language
     public function removeUser(User $user): static
     {
         if ($this->users->removeElement($user)) {
-            // set the owning side to null (unless already changed)
-            if ($user->getLanguage() === $this) {
-                $user->setLanguage(null);
-            }
+            $user->removeTechnicalRole($this);
         }
-
-        return $this;
-    }
-
-    public function getIso(): ?string
-    {
-        return $this->iso;
-    }
-
-    public function setIso(string $iso): static
-    {
-        $this->iso = $iso;
 
         return $this;
     }

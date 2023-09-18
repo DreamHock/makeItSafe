@@ -8,8 +8,8 @@ const store = useStore();
 const actionForm = ref({
   organization: "",
   title: "",
-  complexity: "",
-  priority: "",
+  complexity: 1,
+  priority: 1,
   description: "",
   startAt: "",
   dueAt: "",
@@ -21,8 +21,8 @@ const actionForm = ref({
 });
 
 const handleCreateOrganizations = () => {
-  store.dispatch("organization/createOrganization", {
-    ...organizationForm.value,
+  store.dispatch("action/createAction", {
+    ...actionForm.value,
   });
 };
 </script>

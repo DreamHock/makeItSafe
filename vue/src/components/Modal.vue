@@ -36,7 +36,7 @@ import { TransitionRoot, TransitionChild, Dialog } from "@headlessui/vue";
             leave-to="opacity-0 scale-95"
           >
             <div
-              class="w-[700px] transform overflow-hidden rounded-sm bg-white text-left text-gray-800 align-middle shadow-xl transition-all"
+              class="w-[800px] transform overflow-hidden rounded-sm bg-white text-left text-gray-800 align-middle shadow-xl transition-all"
             >
               <div class="border-b p-4 flex justify-between">
                 <div class="font-bold">{{ name }}</div>

@@ -48,7 +48,7 @@ class ActionController extends AbstractController
     #[IsGranted('ROLE_ADMIN', message: "the authenticated user is not an admin")]
     public function actionsCurrentOrganization(#[CurrentUser()] ?User $user): Response
     {
-        $actions = $this->entityManager->getRepository(User::class)->find($user->getId())
+        $actions = $user
             ->getOrganization()
             ->getActions();
 
@@ -140,18 +140,18 @@ class ActionController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN', message: "the authenticated user is not an admin")]
-    #[Route('/organizations/{id}', methods: ["DELETE"])]
-    function deleteOrganization($id, #[CurrentUser()] ?User $user)
+    #[Route('/actions/{id}', methods: ["DELETE"])]
+    function delete($id, #[CurrentUser()] ?User $user)
     {
-        $organization = $this->entityManager->getRepository(Organization::class)->find($id);
-        $name = $organization->getName();
-        $myOrganizations = $user->getOrganization()->getOrganizations();
-        if ($myOrganizations->contains($organization)) {
-            $this->entityManager->remove($organization);
+        $action = $this->entityManager->getRepository(Action::class)->find($id);
+        $name = $action->getTitle();
+        $myActions = $user->getOrganization()->getActions();
+        if ($myActions->contains($action)) {
+            $this->entityManager->remove($action);
             $this->entityManager->flush();
-            return $this->json(["message" => "the user with the name " . $name . " has been deleted"]);
+            return $this->json(["message" => "the action with the title " . $name . " has been deleted"]);
         } else {
-            return $this->json(["message" => "authorized to delete only your organization"], status: 401);
+            return $this->json(["message" => "authorized to delete only your actions"], status: 401);
         }
     }
 }

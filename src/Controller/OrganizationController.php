@@ -99,7 +99,7 @@ class OrganizationController extends AbstractController
 
     #[IsGranted('ROLE_ADMIN', message: "the authenticated user is not an admin")]
     #[Route('/organizations/{id}', methods: ["DELETE"])]
-    function deleteOrganization($id, #[CurrentUser()] ?User $user)
+    function delete($id, #[CurrentUser()] ?User $user)
     {
         $organization = $this->entityManager->getRepository(Organization::class)->find($id);
         $name = $organization->getName();

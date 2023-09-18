@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Language;
+use App\Entity\Role;
+use App\Entity\TechnicalRole;
 use App\Entity\User;
 use Carbon\Carbon;
 use Doctrine\ORM\EntityManagerInterface;
@@ -101,6 +103,10 @@ class UserController extends AbstractController
         }
         if (count($roles) > 0) {
             $user->setRoles($roles);
+            foreach ($roles as $role) {
+                $roleObject = $this->entityManager->getRepository(TechnicalRole::class)->findBy(['name' => $role]);
+                $user->addTechnicalRole($roleObject);
+            }
         } else {
             $technicalRolesConstraint = new ConstraintViolation('chose one or multiple roles', null, [], $user, 'technicalRole', 'invalid_value');
             $errors->add($technicalRolesConstraint);
@@ -108,6 +114,8 @@ class UserController extends AbstractController
 
         if ($decoded->user->role != "" && in_array($decoded->user->role, ["administrateur", "commanditaire", "auditeur", "audité"])) {
             $roles[] = $decoded->user->role;
+            $roleObject = $this->entityManager->getRepository(Role::class)->findBy(['name' => $decoded->user->role]);
+            $user->setRole($roleObject);
         } else {
             $roleConstraint = new ConstraintViolation('chose one of the roles', null, [], $user, 'role', 'invalid_value');
             $errors->add($roleConstraint);
@@ -135,7 +143,7 @@ class UserController extends AbstractController
 
     #[IsGranted('ROLE_ADMIN', message: "the authenticated user is not an admin")]
     #[Route('/users/{id}', methods: ["DELETE"])]
-    function deleteUser($id)
+    function delete($id)
     {
         $product = $this->entityManager->getRepository(User::class)->find($id);
         $email = $product->getEmail();
@@ -145,5 +153,16 @@ class UserController extends AbstractController
         $this->entityManager->remove($product);
         $this->entityManager->flush();
         return $this->json(["message" => "the user with the email " . $email . " has been deleted"]);
+    }
+
+    #[Route('/roles/{organizationId}', methods: ["GET"])]
+    function findRolesByOrganization($organizationId)
+    {
+        $rolesByOrganization = $this->entityManager->createQuery(
+            'SELECT r.id, r.name from App\Entity\User u join u.role r join u.organization o where o.id = :organizationId'
+        )
+            ->setParameter('organizationId', $organizationId)
+            ->getResult();
+        return $this->json($rolesByOrganization);
     }
 }

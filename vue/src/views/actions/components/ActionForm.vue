@@ -23,135 +23,112 @@ const inputClasses =
 </script>
 
 <template>
-  <div class=" flex flex-col">
-   
+  <div class="flex flex-col">
     <div class="mb-4">
-      <label class="text-gray-700 font-bold mb-2" for="name"
-        >Nom <span class="text-red-500">*</span></label
+      <label class="text-gray-700 font-bold" for="title"
+        >titre <span class="text-red-500">*</span></label
       >
       <input
-        v-model="organization.name"
+        v-model="actionForm.title"
         :class="inputClasses"
         type="text"
-        id="name"
+        id="title"
         required
       />
-      <div class="text-red-500">{{ errors.name }}</div>
+      <div class="text-red-500">{{ errors.title }}</div>
     </div>
-    <div class="mb-4">
-      <label class="text-gray-700 font-bold mb-2 flex gap-1" for="relation"
-        >Relation
-        <span class="text-red-500"
-          ><v-icon name="bi-exclamation-circle-fill" class="text-teal-400"
-        /></span>
-        <span class="text-red-500">*</span>
-      </label>
-      <select
-        v-model="organization.relation"
-        :class="inputClasses"
-        id="relation"
-        required
-      >
-        <option
-          v-for="complexity in complexities"
-          :value="complexity.id"
-          :key="complexity.id"
+    <div class="pr-16">
+      <div class="mb-4 flex justify-between items-center flex-wrap">
+        <label class="text-gray-700 font-bold flex gap-1" for="complexity"
+          >Complexite
+        </label>
+        <select
+          class="w-40"
+          v-model="actionForm.complexity"
+          :class="inputClasses"
+          id="complexity"
+          required
         >
-          {{ complexity.name }}
-        </option>
-      </select>
-      <div class="text-red-500">{{ errors.complexity }}</div>
-    </div>
-    <div class="mb-4">
-      <label class="text-gray-700 font-bold mb-2" for="postalCode"
-        >Adresse postale</label
-      >
-      <input
-        v-model="organization.postalAddress"
-        :class="inputClasses"
-        type="text"
-        id="postalAddress"
-        required
-      />
-      <div class="text-red-500">{{ errors.postalAddress }}</div>
-    </div>
-    <div class="flex gap-8 w-full">
-      <div class="mb-4 w-1/2">
-        <div class="flex justify-between items-center">
-          <label class="text-gray-700 font-bold mb-2" for="postalCode"
-            >Code postale</label
+          <option
+            v-for="complexity in complexities"
+            :value="complexity.id"
+            :key="complexity.id"
           >
-          <input
-            v-model="organization.postalCode"
-            class="appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline disabled:bg-gray-200 w-8/12"
-            type="text"
-            id="postalCode"
-            required
-          />
-        </div>
-        <div class="text-red-500">{{ errors.postalCode }}</div>
-      </div>
-      <div class="mb-4 w-1/2">
-        <div class="flex justify-between items-center">
-          <label class="text-gray-700 font-bold mb-2" for="city">Ville</label>
-          <input
-            v-model="organization.city"
-            class="appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline disabled:bg-gray-200 w-8/12"
-            type="text"
-            id="city"
-            required
-          />
-        </div>
-        <div class="text-red-500">{{ errors.city }}</div>
-      </div>
-    </div>
-    <div class="mb-4">
-      <label class="text-gray-700 font-bold mb-2" for="country"
-        >Pays
-        <span class="text-red-500">*</span>
-      </label>
-      <select v-model="organization.country" name="" id="country" :class="inputClasses">
-        <option
-          v-for="priority in priorities"
-          :value="priority.id"
-          :key="priority.id"
+            {{ complexity.name }}
+          </option>
+        </select>
+        <label class="text-gray-700 font-bold flex gap-1" for="priority"
+          >Priorite
+        </label>
+        <select
+          class="w-40"
+          v-model="actionForm.priority"
+          :class="inputClasses"
+          id="priority"
+          required
         >
-          {{ priority.name }}
-        </option>
-      </select>
+          <option
+            v-for="priority in priorities"
+            :value="priority.id"
+            :key="priority.id"
+          >
+            {{ priority.name }}
+          </option>
+        </select>
+      </div>
+      <div class="text-red-500">{{ errors.complexity }}</div>
       <div class="text-red-500">{{ errors.priority }}</div>
     </div>
     <div class="mb-4">
-      <label class="text-gray-700 font-bold mb-2" for="website">Site web</label>
-      <input
-        v-model="organization.website"
-        :class="inputClasses"
-        type="text"
-        id="website"
-      />
-      <div class="text-red-500">{{ errors.website }}</div>
-    </div>
-    <div class="mb-4">
-      <label class="text-gray-700 font-bold mb-2" for="siret">SIRET</label>
-      <input
-        v-model="organization.siret"
-        :class="inputClasses"
-        type="text"
-        id="siret"
-      />
-      <div class="text-red-500">{{ errors.siret }}</div>
-    </div>
-    <div class="mb-4">
-      <label class="text-gray-700 font-bold mb-2" for="activityArea"
-        >secteur d'activite</label
+      <label class="text-gray-700 font-bold" for="description"
+        >Description</label
       >
-      <input
-        v-model="organization.activityArea"
+      <textarea
+        class="min-h-[150px]"
+        v-model="actionForm.description"
         :class="inputClasses"
-        type="text"
-        id="activityArea"
-      />
-      <div class="text-red-500">{{ errors.activityArea }}</div>
+        id="description"
+        required
+      ></textarea>
+      <div class="text-red-500">{{ errors.description }}</div>
+    </div>
+    <hr class="h-1 bg-gray-100 border-0 rounded" />
+    <div class="font-bold">Pilotage</div>
+    <div>
+      <div class="mb-4 flex items-center justify-between">
+        <label class="text-gray-700 font-bold" for="startAt"
+          >Date de debut</label
+        >
+        <input
+          v-model="actionForm.startAt"
+          :class="inputClasses"
+          class="w-[200px]"
+          type="date"
+          id="startAt"
+          required
+        />
+        <label class="text-gray-700 font-bold" for="startAt"
+          >Date de debut</label
+        >
+        <input
+          v-model="actionForm.startAt"
+          :class="inputClasses"
+          class="w-[200px]"
+          type="date"
+          id="startAt"
+          required
+        />
+      </div>
+      <div class="text-red-500">{{ errors.startAt }}</div>
+      <div class="text-red-500">{{ errors.dueAt }}</div>
+    </div>
+    <div class="mb-4">
+      <label class="text-gray-700 font-bold" for="description"
+        >Assigner A</label
+      >
+      <div>
+        
+      </div>
     </div>
   </div>
 </template>

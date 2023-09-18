@@ -8,12 +8,11 @@ import CreateAction from "./CreateAction.vue";
 const store = useStore();
 const isOpen = ref(false);
 onBeforeMount(() => {
-  console.log(store.state.user.name);
-  store.dispatch("organization/getMyOrganizations");
+  store.dispatch("action/getMyActions");
 });
 
-const deleteOrganization = (id) => {
-  store.dispatch("organization/deleteOrganization", id);
+const deleteAction = (id) => {
+  store.dispatch("action/deleteAction", id);
 };
 
 const openModal = () => {
@@ -40,11 +39,11 @@ const closeModal = () => {
         <ul>
           <li
             class="flex items-center justify-between p-2"
-            v-for="organization in $store.state.organization.myOrganizations"
-            :key="organization.id"
+            v-for="action in $store.state.action.myActions"
+            :key="action.id"
           >
-            <div>{{ organization.name }}</div>
-            <button @click="deleteOrganization(organization.id)">Delete</button>
+            <div>{{ action.title }}</div>
+            <button @click="deleteAction(action.id)">Delete</button>
           </li>
         </ul>
       </div>

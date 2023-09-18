@@ -1,13 +1,13 @@
 import axios from "axios";
 
-const organization = {
+const action = {
   namespaced: true,
   state: {
     myActions: [],
     errors: {},
   },
   mutations: {
-    setMyOrgnizations: (state, actions) => {
+    setMyActions: (state, actions) => {
       state.myActions = actions;
     },
     // setErrors: (state, errors) => {
@@ -22,41 +22,41 @@ const organization = {
     // },
   },
   actions: {
-    // getMyOrganizations: async ({ commit }) => {
-    //   const { data } = await axios.get(
-    //     "/organizations/organizations-current-organization",
-    //     {
-    //       headers: { Authorization: `bearer ${localStorage.getItem("token")}` },
-    //     }
-    //   );
-    //   commit("setMyOrgnizations", data);
-    // },
-
-    createAction: async ({ dispatch, commit }, payload) => {
-      const { data } = await axios.post(
-        "/actions",
-        { ...payload },
+    getMyActions: async ({ commit }) => {
+      const { data } = await axios.get(
+        "/actions/actions-current-organization",
         {
           headers: { Authorization: `bearer ${localStorage.getItem("token")}` },
         }
       );
-    //   console.log(data);
-    //   data.violations && commit("setErrors", data.violations);
+      commit("setMyActions", data);
     },
 
-    // deleteOrganization: async ({ dispatch }, id) => {
-    //   // console.log(id)
-    //   try {
-    //     const { data } = await axios.delete(`/organizations/${id}`, {
-    //       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    //     });
-    //     console.log(data);
-    //     dispatch("getMyOrganizations");
-    //   } catch (errors) {
-    //     console.log(errors);
-    //   }
+    // createAction: async ({ dispatch, commit }, payload) => {
+    //   const { data } = await axios.post(
+    //     "/actions",
+    //     { ...payload },
+    //     {
+    //       headers: { Authorization: `bearer ${localStorage.getItem("token")}` },
+    //     }
+    //   );
+    // //   console.log(data);
+    // //   data.violations && commit("setErrors", data.violations);
     // },
+
+    deleteAction: async ({ dispatch }, id) => {
+      // console.log(id)
+      try {
+        const { data } = await axios.delete(`/actions/${id}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        console.log(data);
+        dispatch("getMyActions");
+      } catch (errors) {
+        console.log(errors);
+      }
+    },
   },
 };
 
-export default organization;
+export default action;

@@ -53,7 +53,7 @@ class Organization
     #[Assert\NotBlank()]
     #[Assert\Type(Organization::class)]
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'organizations')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?self $parent = null;
 
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]

@@ -90,9 +90,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Action::class)]
     private Collection $actions;
 
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Role $role = null;
+
+    #[Assert\Type(TechnicalRole::class)]
+    #[ORM\ManyToMany(targetEntity: TechnicalRole::class, inversedBy: 'users')]
+    private Collection $technicalRoles;
+
     public function __construct()
     {
         $this->actions = new ArrayCollection();
+        $this->technicalRoles = new ArrayCollection();
     }
 
 
@@ -340,6 +349,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $action->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getRole(): ?Role
+    {
+        return $this->role;
+    }
+
+    public function setRole(?Role $role): static
+    {
+        $this->role = $role;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, TechnicalRole>
+     */
+    public function getTechnicalRoles(): Collection
+    {
+        return $this->technicalRoles;
+    }
+
+    public function addTechnicalRole(TechnicalRole $technicalRole): static
+    {
+        if (!$this->technicalRoles->contains($technicalRole)) {
+            $this->technicalRoles->add($technicalRole);
+        }
+
+        return $this;
+    }
+
+    public function removeTechnicalRole(TechnicalRole $technicalRole): static
+    {
+        $this->technicalRoles->removeElement($technicalRole);
 
         return $this;
     }
