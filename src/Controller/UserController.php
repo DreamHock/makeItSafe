@@ -155,15 +155,15 @@ class UserController extends AbstractController
         return $this->json(["message" => "the user with the email " . $email . " has been deleted"]);
     }
 
-    #[Route('/roles/{organizationId}', methods: ["GET"])]
-    function findRolesByOrganization($organizationId)
+    #[Route('/users/organization={organizationId}', methods: ["GET"])]
+    function findUsersByOrganization($organizationId)
     {
-        $rolesByOrganization = $this->entityManager->createQuery(
-            'SELECT distinct r.id, r.name from App\Entity\User u join u.role r join u.organization o where o.id = :organizationId'
+        $usersByOrganization = $this->entityManager->createQuery(
+            'SELECT distinct u.id, u.firstName, u.lastName from App\Entity\User u join u.organization o where o.id = :organizationId'
         )
             ->setParameter('organizationId', $organizationId)
             ->getResult();
-        
-        return $this->json($rolesByOrganization);
+
+        return $this->json($usersByOrganization);
     }
 }
