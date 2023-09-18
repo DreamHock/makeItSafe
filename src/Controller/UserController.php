@@ -159,10 +159,11 @@ class UserController extends AbstractController
     function findRolesByOrganization($organizationId)
     {
         $rolesByOrganization = $this->entityManager->createQuery(
-            'SELECT r.id, r.name from App\Entity\User u join u.role r join u.organization o where o.id = :organizationId'
+            'SELECT distinct r.id, r.name from App\Entity\User u join u.role r join u.organization o where o.id = :organizationId'
         )
             ->setParameter('organizationId', $organizationId)
             ->getResult();
+        
         return $this->json($rolesByOrganization);
     }
 }
