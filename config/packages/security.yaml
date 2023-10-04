@@ -2,7 +2,7 @@ security:
   # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
   password_hashers:
     App\Entity\User: "auto"
-  
+
   enable_authenticator_manager: true
   # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
   providers:
@@ -28,12 +28,15 @@ security:
       pattern: ^/api
       stateless: true
       jwt: ~
+  role_hierarchy:
+    ROLE_ADMIN: ROLE_USER
+    ROLE_INTERVIEW: ROLE_USER
 
-      # activate different ways to authenticate
-      # https://symfony.com/doc/current/security.html#the-firewall
+    # activate different ways to authenticate
+    # https://symfony.com/doc/current/security.html#the-firewall
 
-      # https://symfony.com/doc/current/security/impersonating_user.html
-      # switch_user: true
+    # https://symfony.com/doc/current/security/impersonating_user.html
+    # switch_user: true
 
   # Easy way to control access for large sections of your site
   # Note: Only the *first* access control that matches will be used

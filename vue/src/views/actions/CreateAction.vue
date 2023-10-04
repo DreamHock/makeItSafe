@@ -1,7 +1,8 @@
 <script setup>
 import { ref } from "vue";
 import { useStore } from "vuex";
-import ActionForm from "./components/ActionForm.vue";
+import ActionForm from './components/ActionForm.vue'
+
 
 const store = useStore();
 
@@ -40,7 +41,7 @@ const handleCreateOrganizations = () => {
       type="submit"
       @click="handleCreateOrganizations"
     >
-      Suivant
+      Enregistrer
     </button>
   </div>
 </template>

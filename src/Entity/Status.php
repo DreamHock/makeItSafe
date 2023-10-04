@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\TechnicalRoleRepository;
+use App\Repository\StatusRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: TechnicalRoleRepository::class)]
-class TechnicalRole
+#[ORM\Entity(repositoryClass: StatusRepository::class)]
+class Status
 {
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: "NONE")]
@@ -18,12 +18,12 @@ class TechnicalRole
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'technicalRoles')]
-    private Collection $users;
+    #[ORM\OneToMany(mappedBy: 'status', targetEntity: Action::class)]
+    private Collection $actions;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
+        $this->actions = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -51,27 +51,30 @@ class TechnicalRole
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection<int, Action>
      */
-    public function getUsers(): Collection
+    public function getActions(): Collection
     {
-        return $this->users;
+        return $this->actions;
     }
 
-    public function addUser(User $user): static
+    public function addAction(Action $action): static
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->addTechnicalRole($this);
+        if (!$this->actions->contains($action)) {
+            $this->actions->add($action);
+            $action->setStatus($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): static
+    public function removeAction(Action $action): static
     {
-        if ($this->users->removeElement($user)) {
-            $user->removeTechnicalRole($this);
+        if ($this->actions->removeElement($action)) {
+            // set the owning side to null (unless already changed)
+            if ($action->getStatus() === $this) {
+                $action->setStatus(null);
+            }
         }
 
         return $this;

@@ -16,21 +16,26 @@ use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[Route('/api')]
 class UserController extends AbstractController
 
 {
-    public $entityManager;
-    public $normalizer;
-    public $validator;
-    public function __construct(EntityManagerInterface $entityManager, NormalizerInterface $normalizer, ValidatorInterface $validator)
+    private $entityManager;
+    private $normalizer;
+    private $validator;
+    private $client;
+
+    public function __construct(HttpClientInterface $client, EntityManagerInterface $entityManager, NormalizerInterface $normalizer, ValidatorInterface $validator)
     {
         $this->entityManager = $entityManager;
         $this->normalizer = $normalizer;
         $this->validator = $validator;
+        $this->client = $client;
     }
 
     public function customNormalizer($object)
@@ -45,12 +50,13 @@ class UserController extends AbstractController
     #[Route('/users/current-user', name: 'app_user', methods: ['get'])]
     public function currentUser(#[CurrentUser()] ?User $user): Response
     {
-        return $this->json([
-            "id" => $user->getId(),
-            "firstName" => $user->getFirstName(),
-            "lastName" => $user->getLastName(),
-            "email" => $user->getEmail(),
-        ]);
+        // return $this->json([
+        //     "id" => $user->getId(),
+        //     "firstName" => $user->getFirstName(),
+        //     "lastName" => $user->getLastName(),
+        //     "email" => $user->getEmail(),
+        // ]);
+        return $this->json($user);
     }
 
     #[Route('/users/users-current-organization', name: "users_current_organization", methods: ["get"])]
@@ -72,9 +78,9 @@ class UserController extends AbstractController
 
     #[Route('/users', name: "user_store", methods: ["post"])]
     #[IsGranted('ROLE_ADMIN', message: "the authenticated user is not an admin")]
-    public function store(Request $request, #[CurrentUser()] ?User $currentUser)
+    public function store(Request $request, #[CurrentUser()] ?User $currentUser, $decodedContent = null)
     {
-        $decoded = json_decode($request->getContent());
+        $decoded = $decodedContent == null ? json_decode($request->getContent()) : $decodedContent;
         $user = new User();
         $organization = $currentUser->getOrganization();
         $user->setOrganization($organization);
@@ -132,7 +138,11 @@ class UserController extends AbstractController
             $this->entityManager->flush();
             // Commit the transaction
             $this->entityManager->commit();
-            return $this->json(['message' => 'User created successfully'], Response::HTTP_CREATED);
+            if ($decodedContent == null) {
+                return $this->json(['message' => 'User created successfully'], Response::HTTP_CREATED);
+            } else {
+                return $this->json(['message' => 'User was updated successfully'], Response::HTTP_CREATED);
+            }
         } catch (\Exception $e) {
             // Rollback the transaction on error
             $this->entityManager->rollback();
@@ -141,20 +151,27 @@ class UserController extends AbstractController
         }
     }
 
+
+
     #[IsGranted('ROLE_ADMIN', message: "the authenticated user is not an admin")]
     #[Route('/users/{id}', methods: ["DELETE"])]
     function delete($id)
     {
         $product = $this->entityManager->getRepository(User::class)->find($id);
-        $email = $product->getEmail();
-        if (in_array("ROLE_ADMIN", $product->getRoles())) {
-            return $this->json(["message" => "you are not authorized to delete an admin"]);
+        if ($product) {
+            $email = $product->getEmail();
+            if (in_array("ROLE_ADMIN", $product->getRoles())) {
+                return $this->json(["message" => "you are not authorized to delete an admin"]);
+            }
+            $this->entityManager->remove($product);
+            $this->entityManager->flush();
+            return $this->json(["message" => "the user with the email " . $email . " has been deleted"]);
+        } else {
+            return $this->json(["message" => "can't delete or modify unavailable user"]);
         }
-        $this->entityManager->remove($product);
-        $this->entityManager->flush();
-        return $this->json(["message" => "the user with the email " . $email . " has been deleted"]);
     }
 
+    #[IsGranted('ROLE_ADMIN', message: "the authenticated user is not an admin")]
     #[Route('/users/organization={organizationId}', methods: ["GET"])]
     function findUsersByOrganization($organizationId)
     {
@@ -165,5 +182,18 @@ class UserController extends AbstractController
             ->getResult();
 
         return $this->json($usersByOrganization);
+    }
+
+    #[IsGranted('ROLE_ADMIN', message: "the authenticated user is not an admin")]
+    #[Route('/users/role={roleId}-organization={organizationId}', methods: ["GET"])]
+    function findUsersByRoleAndOrganization($roleId, $organizationId)
+    {
+        $usersByRole = $this->entityManager->createQuery(
+            'SELECT distinct u.id, u.firstName, u.lastName from App\Entity\User u where u.role = :roleId and u.organization = :organizationId'
+        )
+            ->setParameters(['roleId' => $roleId, 'organizationId' => $organizationId])
+            ->getResult();
+
+        return $this->json($usersByRole);
     }
 }

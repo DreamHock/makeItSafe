@@ -16,7 +16,7 @@ const relations = [
 const countries = [
   { id: 1, name: "France" },
   { id: 2, name: "Maroc" },
-  { id: 3, name: "USA" },
+  { id: 3, name: "Etas-unis" },
 ];
 
 const inputClasses =

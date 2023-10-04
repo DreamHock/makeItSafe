@@ -11,14 +11,14 @@ use Doctrine\ORM\Mapping as ORM;
 class Country
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: "NONE")]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'Country', targetEntity: Organization::class)]
+    #[ORM\OneToMany(mappedBy: 'country', targetEntity: Organization::class)]
     private Collection $organizations;
 
     public function __construct()
@@ -34,6 +34,13 @@ class Country
     public function getName(): ?string
     {
         return $this->name;
+    }
+
+    public function setId(string $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function setName(string $name): static

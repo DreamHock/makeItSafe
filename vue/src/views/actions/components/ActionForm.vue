@@ -1,6 +1,7 @@
 <script setup>
 import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
+import Assign from "./Assign.vue";
 defineComponent({});
 const props = defineProps({
   actionForm: Object,
@@ -19,7 +20,7 @@ const priorities = [
 ];
 
 const inputClasses =
-  "appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline disabled:bg-gray-200";
+  "appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline disabled:bg-gray-200";
 </script>
 
 <template>
@@ -30,6 +31,7 @@ const inputClasses =
       >
       <input
         v-model="actionForm.title"
+        class="w-full"
         :class="inputClasses"
         type="text"
         id="title"
@@ -84,7 +86,7 @@ const inputClasses =
         >Description</label
       >
       <textarea
-        class="min-h-[150px]"
+        class="min-h-[150px] w-full"
         v-model="actionForm.description"
         :class="inputClasses"
         id="description"
@@ -94,40 +96,39 @@ const inputClasses =
     </div>
     <hr class="h-1 bg-gray-100 border-0 rounded" />
     <div class="font-bold">Pilotage</div>
-    <div>
-      <div class="mb-4 flex items-center justify-between">
-        <label class="text-gray-700 font-bold" for="startAt"
-          >Date de debut</label
-        >
-        <input
-          v-model="actionForm.startAt"
-          :class="inputClasses"
-          class="w-[200px]"
-          type="date"
-          id="startAt"
-          required
-        />
-        <label class="text-gray-700 font-bold" for="startAt"
-          >Date de debut</label
-        >
-        <input
-          v-model="actionForm.startAt"
-          :class="inputClasses"
-          class="w-[200px]"
-          type="date"
-          id="startAt"
-          required
-        />
+    <div class="flex flex-col">
+      <div class="mb-4 flex items-center gap-12 flex-wrap">
+        <div class="w-1/2 flex items-center">
+          <label class="text-gray-700 font-bold w-2/5" for="startAt"
+            >Date de debut</label
+          >
+          <input
+            v-model="actionForm.startAt"
+            :class="inputClasses"
+            class="flex-grow"
+            type="date"
+            id="startAt"
+            required
+          />
+        </div>
+        <div class="flex items-center flex-grow">
+          <label class="text-gray-700 font-bold w-2/5" for="dueAt">Echeance</label>
+          <input
+            v-model="actionForm.dueAt"
+            :class="inputClasses"
+            class="flex-grow"
+            type="date"
+            id="dueAt"
+            required
+          />
+        </div>
       </div>
       <div class="text-red-500">{{ errors.startAt }}</div>
       <div class="text-red-500">{{ errors.dueAt }}</div>
     </div>
     <div class="mb-4">
-      <label class="text-gray-700 font-bold" for="description"
-        >Assigner A</label
-      >
       <div>
-        
+        <Assign :actionForm="actionForm" />
       </div>
     </div>
   </div>

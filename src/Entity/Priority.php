@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Priority
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
+    #[ORM\GeneratedValue(strategy: "NONE")]
     #[ORM\Column]
     private ?int $id = null;
 
@@ -29,6 +29,13 @@ class Priority
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(string $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getName(): ?string

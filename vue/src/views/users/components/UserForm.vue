@@ -29,7 +29,9 @@ const inputClasses =
         id="email"
         required
       />
-      <div class="text-red-500">{{ errors.email ? errors.email : errors.emailTaken }}</div>
+      <div class="text-red-500">
+        {{ errors.email ? errors.email : errors.emailTaken }}
+      </div>
     </div>
     <div class="mb-4">
       <label class="block text-gray-700 font-bold mb-2" for="language"

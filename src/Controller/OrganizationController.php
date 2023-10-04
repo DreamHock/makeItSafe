@@ -112,4 +112,14 @@ class OrganizationController extends AbstractController
             return $this->json(["message" => "authorized to delete only your organization"], status: 401);
         }
     }
+
+    #[IsGranted('ROLE_ADMIN', message: "the authenticated user is not an admin")]
+    #[Route('/organizations/my-organization', methods: ["GET"])]
+    function myOrganization(#[CurrentUser()] ?User $user)
+    {
+        return $this->json([
+            'id' => $user->getOrganization()->getId(),
+            'name' => $user->getOrganization()->getName()
+        ]);
+    }
 }

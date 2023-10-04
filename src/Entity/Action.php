@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ActionRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ActionRepository::class)]
@@ -26,7 +27,7 @@ class Action
     #[Assert\DateTime(message: "chose a valid date")]
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $startAt = null;
-    
+
     #[Assert\DateTime(message: "chose a valid date")]
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $dueAt = null;
@@ -48,15 +49,34 @@ class Action
     #[Assert\Type(Organization::class, message: "chose one of the valid organization")]
     #[ORM\ManyToOne(inversedBy: 'actions')]
     #[ORM\JoinColumn(nullable: false)]
+    #[MaxDepth(1)]
     private ?Organization $organization = null;
 
     #[ORM\ManyToOne(inversedBy: 'actions')]
     #[ORM\JoinColumn(nullable: false)]
+    #[MaxDepth(1)]
     private ?User $user = null;
+
+    #[ORM\ManyToOne(inversedBy: 'actions')]
+    private ?Status $status = null;
+
+    #[ORM\Column]
+    private ?bool $isReccurent = null;
+
+    #[ORM\Column(nullable: true, name: "`interval`")]
+    private ?int $interval = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $nextUpdatedAt = null;
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+    public function setId(string $id): static
+    {
+        $this->id = $id;
+        return $this;
     }
 
     public function getTitle(): ?string
@@ -162,6 +182,54 @@ class Action
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getStatus(): ?Status
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?Status $status): static
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function isIsReccurent(): ?bool
+    {
+        return $this->isReccurent;
+    }
+
+    public function setIsReccurent(?bool $isReccurent): static
+    {
+        $this->isReccurent = $isReccurent;
+
+        return $this;
+    }
+
+    public function getInterval(): ?int
+    {
+        return $this->interval;
+    }
+
+    public function setInterval(?int $interval): static
+    {
+        $this->interval = $interval;
+
+        return $this;
+    }
+
+    public function getNextUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->nextUpdatedAt;
+    }
+
+    public function setNextUpdatedAt(\DateTimeImmutable $nextUpdatedAt): static
+    {
+        $this->nextUpdatedAt = $nextUpdatedAt;
 
         return $this;
     }

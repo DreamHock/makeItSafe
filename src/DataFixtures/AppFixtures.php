@@ -9,6 +9,7 @@ use App\Entity\Organization;
 use App\Entity\Priority;
 use App\Entity\Relation;
 use App\Entity\Role;
+use App\Entity\Status;
 use App\Entity\TechnicalRole;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -29,44 +30,66 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $roles = ["administrateur", "commanditaire", "auditeur", "audite"];
-        foreach ($roles as $r) {
+        foreach ($roles as $key => $r) {
             $role = new Role();
+            $role->setId($key + 1);
+            echo $key;
             $role->setName($r);
             $manager->persist($role);
         }
         $technicalRoles = ["ROLE_ADMIN", "ROLE_USER", "ROLE_INTERVIEW"];
-        foreach ($technicalRoles as $tr) {
+        foreach ($technicalRoles as $key => $tr) {
             $technicalRole = new TechnicalRole();
+            $technicalRole->setId($key + 1);
+            echo $key;
             $technicalRole->setName($tr);
             $manager->persist($technicalRole);
         }
         $languages = ["Arabe", "Anglais", "Francais"];
-        foreach ($languages as $l) {
+        foreach ($languages as $key => $l) {
             $language = new Language();
+            $language->setId($key + 1);
+            echo $key;
             $language->setName($l);
             $manager->persist($language);
         }
         $countries = ["Maroc", "France", "Etas-unis"];
-        foreach ($countries as $c) {
+        foreach ($countries as $key => $c) {
             $country = new Country();
+            $country->setId($key + 1);
+            echo $key;
             $country->setName($c);
             $manager->persist($country);
         }
         $complexities = ["Simple", "Modere", "Complexe", "Tres complexe"];
-        foreach ($complexities as $c) {
+        foreach ($complexities as $key => $c) {
             $complexity = new Complexity();
+            $complexity->setId($key + 1);
+            echo $key;
             $complexity->setName($c);
             $manager->persist($complexity);
         }
         $priorities = ["Basse", "Intermediaire", "Urgente"];
-        foreach ($priorities as $p) {
+        foreach ($priorities as $key => $p) {
             $priority = new Priority();
+            $priority->setId($key + 1);
+            echo $key;
             $priority->setName($p);
             $manager->persist($priority);
         }
+        $statuses = ["A realiser", "En cours", "Fermée", "Refusée", "Abandonnée"];
+        foreach ($statuses as $key => $s) {
+            $status = new Status();
+            $status->setId($key + 1);
+            echo $key;
+            $status->setName($s);
+            $manager->persist($status);
+        }
         $relations = ["Filiale", "Sous-traitant", "Client"];
-        foreach ($relations as $r) {
+        foreach ($relations as $key => $r) {
             $relation = new Relation();
+            $relation->setId($key + 1);
+            echo $key;
             $relation->setName($r);
             $manager->persist($relation);
         }
